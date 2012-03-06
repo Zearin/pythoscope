@@ -4,7 +4,7 @@ from pythoscope.logger import log
 from pythoscope.generator.adder import add_test_case_to_project
 from pythoscope.generator.assertions import assertions_for_interaction
 from pythoscope.generator.builder import UnittestTemplate, NoseTemplate,\
-    generate_test_contents
+    PyVowsTemplate, generate_test_contents
 from pythoscope.generator.case_namer import call2testname, name2testname,\
     userobject2testname
 from pythoscope.generator.cleaner import remove_objects_unworthy_of_naming
@@ -107,6 +107,8 @@ class TestGenerator(object):
             return UnittestTestGenerator()
         elif template == 'nose':
             return NoseTestGenerator()
+        elif template == 'pyvows':
+            return PyVowsTestGenerator()
         else:
             raise UnknownTemplate(template)
     from_template = classmethod(from_template)
@@ -243,6 +245,12 @@ class NoseTestGenerator(TestGenerator):
 
     def test_class_header(self, name):
         return "class %s:" % name
+
+class PyVowsTestGenerator(TestGenerator):
+    template = PyVowsTemplate()
+    
+    def test_class_header(self, name):
+        return "class %s(Vows.Context):" % name
 
 def add_tests_to_project(project, modnames, template, force=False):
     generator = TestGenerator.from_template(template)

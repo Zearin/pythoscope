@@ -43,6 +43,14 @@ class NoseTemplate(Template):
         return addimport(CodeString("raise SkipTest # TODO: implement your test here"),
                          ('nose', 'SkipTest'))
 
+class PyVowsTemplate(Template):
+    def equal_assertion(self, expected, actual):
+        return combine(actual, expected, "expect(%s).to_equal(%s)")
+    def raises_assertion(self, exception, call):
+        return combine(call, exception, "expect(%s).to_be_an_error_like(%s)")
+    def skip_test(self):
+        return CodeString("pass # TODO: implement your test here")
+
 # :: CodeString -> CodeString
 def add_newline(code_string):
     return combine(code_string, "\n")
