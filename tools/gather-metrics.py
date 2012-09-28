@@ -14,15 +14,15 @@ class GatheringError(Exception):
 
 class GatheringResults(object):
     def __init__(self, loc, functions, classes, methods, passed, skipped, errors, failures, coverage):
-        self.loc = loc
-        self.functions = functions
-        self.classes = classes
-        self.methods = methods
-        self.passed = passed
-        self.skipped = skipped
-        self.errors = errors
-        self.failures = failures
-        self.coverage = coverage
+        self.loc        = loc
+        self.functions  = functions
+        self.classes    = classes
+        self.methods    = methods
+        self.passed     = passed
+        self.skipped    = skipped
+        self.errors     = errors
+        self.failures   = failures
+        self.coverage   = coverage
     total = property(lambda s: s.passed + s.skipped + s.errors + s.failures)
 
 def notify(message):
@@ -35,10 +35,10 @@ def check_environment():
 
 def prepare_project(project):
     notify("Preparing project...")
-    archive = os.path.join(PREFIX, project) + ".tar.gz"
+    archive     = os.path.join(PREFIX, project) + ".tar.gz"
     project_dir = tempfile.mkdtemp(prefix="pythoscope-")
     os.chdir(project_dir)
-    t = tarfile.open(archive)
+    t           = tarfile.open(archive)
     t.extractall(project_dir)
     t.close()
     notify("Project ready in %s." % project_dir)
@@ -62,9 +62,9 @@ def get_code_metrics_from_file(code):
     class ModuleVisitor(ASTVisitor):
         def __init__(self):
             ASTVisitor.__init__(self)
-            self.functions = 0
-            self.classes = 0
-            self.methods = 0
+            self.functions  = 0
+            self.classes    = 0
+            self.methods    = 0
         def visit_class(self, name, bases, body):
             visitor = descend(body.children, ClassVisitor)
             self.methods += visitor.methods

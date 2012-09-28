@@ -96,7 +96,7 @@ class TestMethodDescription(object):
         self.name = name
         self.code = code
     def contains_code(self):
-        return not all([(line.strip().startswith("#") or line.strip() == '') for line in self.code.splitlines()])
+        return not all([(line.strip().startswith('#') or line.strip() == '') for line in self.code.splitlines()])
 
 class TestGenerator(object):
     main_snippet = EmptyCode()
@@ -158,14 +158,17 @@ class TestGenerator(object):
 
     def _generate_test_class_code(self, class_name, method_descriptions):
         result = "%s\n" % (self.test_class_header(class_name))
+
         for method_description in method_descriptions:
             result += "    def %s(self):\n" % method_description.name
-            result += indented_setup(method_description.code, "        ")
+            result += indented_setup(method_description.code, '        ')
             self.ensure_imports(method_description.code.imports)
             # We need at least one statement in a method to be syntatically correct.
             if not method_description.contains_code():
                 result += "        pass\n"
             result += "\n"
+
+        result += "\n"
         return result
 
     def _generate_test_class(self, class_name, method_descriptions, module, body):
