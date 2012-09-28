@@ -253,9 +253,55 @@ class NoseTestGenerator(TestGenerator):
 
 class PyVowsTestGenerator(TestGenerator):
     template = PyVowsTemplate()
-    
+
     def test_class_header(self, name):
-        return "class %s(Vows.Context):" % name
+        self.ensure_import('pyvows')
+        return  "class %s(Vows.Context):" % name
+
+#     def _generate_test_cases(self, module):
+#         for object in testable_objects(module):
+#             test_case = self._generate_test_case(object, module)
+#             if test_case:
+#                 yield test_case
+
+#     def _generate_test_case(self, object, module):
+#         class_name = name2testname(camelize(object.name))
+#         method_descriptions = resolve_name_duplicates(sorted_test_method_descriptions(self._generate_test_method_descriptions(object, module)))
+#
+#         # Don't generate empty test classes.
+#         if method_descriptions:
+#             body = self._generate_test_class_code(class_name, method_descriptions)
+#             return self._generate_test_class(class_name, method_descriptions, module, body)
+
+    def _generate_test_class_code(self, class_name, method_descriptions):
+        result = "%s\n" % (self.test_class_header(class_name))
+
+        result += "    def topic(self):\n"
+        result += "        return " + class_name + "()"
+        result += "\n\n"
+
+        for method_description in method_descriptions:
+            result += "    def %s(self, topic):\n" % method_description.name
+            result += indented_setup(method_description.code, "        ")
+            self.ensure_imports(method_description.code.imports)
+            # We need at least one statement in a method to be syntatically correct.
+            if not method_description.contains_code():
+                result += "        pass\n"
+            result += "\n"
+
+        result += "\n"
+        return result
+
+    def _generate_test_class(self, class_name, method_descriptions, module, body):
+        code = parse_fragment(body)
+        def methoddesc2testmethod(method_description):
+            name = method_description.name
+            return TestMethod(name=name, code=find_method_code(code, name))
+        return TestClass(name               =class_name,
+                         code               =code,
+                         test_cases         =map(methoddesc2testmethod, method_descriptions),
+                         imports            =self.imports,
+                         associated_modules =[module])
 
 def add_tests_to_project(project, modnames, template, force=False):
     generator = TestGenerator.from_template(template)
