@@ -92,7 +92,9 @@ def indented_setup(setup, indentation):
     return ''.join([indentation + line for line in setup.splitlines(True)])
 
 class TestMethodDescription(object):
-    def __init__(self, name, code=""):
+    #   @FIXME
+    #       Add docstring
+    def __init__(self, name, code=''):
         self.name = name
         self.code = code
     def contains_code(self):
