@@ -141,7 +141,7 @@ def do_pythoscope_init(project_path):
     notify("Doing pythoscope --init...")
     status = os.system("pythoscope --init %s" % project_path)
     notify("Done.")
-    if status != 0:
+    if status is not 0:
         raise GatheringError("Failed at static inspection.")
 
 def put_point_of_entry(poe, project_dir):
@@ -163,7 +163,7 @@ def generate_tests_for_file(project_dir, appfile):
     print output
     if contains_dynamic_inspection_error(output):
         raise GatheringError("Failed at dynamic inspection.")
-    if status != 0:
+    if status is not 0:
         raise GatheringError("Failed during test generation: exited with code=%d." % status)
     notify("Done.")
 
