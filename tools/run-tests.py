@@ -1,4 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+
+from  __future__ import generators, print_function, unicode_literals
 
 import glob
 import shutil
